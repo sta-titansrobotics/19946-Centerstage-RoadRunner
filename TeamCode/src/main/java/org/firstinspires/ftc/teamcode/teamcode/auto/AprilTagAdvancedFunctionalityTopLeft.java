@@ -43,15 +43,24 @@ public class AprilTagAdvancedFunctionalityTopLeft extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d topLeftStartPose = new Pose2d(-70, 10, Math.toRadians(0));
+        Pose2d topLeftStartPose = new Pose2d(-63, 10, Math.toRadians(0));
 
         drive.setPoseEstimate(topLeftStartPose);
 
         Trajectory startTopLeftTraj = drive.trajectoryBuilder(topLeftStartPose)
-                .splineToConstantHeading(new Vector2d(-37, 22), Math.toRadians(0))
-                .addDisplacementMarker(() -> {
+                .splineToConstantHeading(new Vector2d(-43, 22), Math.toRadians(0))
+                .lineToConstantHeading(new Vector2d(-37, 22),
+                        SampleMecanumDrive.getVelocityConstraint(8, 49, 14.65),
+                        SampleMecanumDrive.getAccelerationConstraint(49)
+                )
+                .addSpatialMarker(new Vector2d(-37, 22), () -> {
                     //drop the pixel
                 })
+                .back((7.5),
+                        SampleMecanumDrive.getVelocityConstraint(8, 49, 14.65),
+                        SampleMecanumDrive.getAccelerationConstraint(49)
+                )
+                .lineToLinearHeading(new Pose2d(-41.25, 22, Math.toRadians(90))) //back up and face the left AprilTag
                 .build();
 
         waitForStart();
@@ -69,6 +78,7 @@ public class AprilTagAdvancedFunctionalityTopLeft extends LinearOpMode {
             int leftTrajectory = 1;
             int middleTrajectory = 2;
             int rightTrajectory = 3;
+            int Trajectory = 3;
 
             AprilTagDetection tag = null;
             if (tagProcessor.getDetections().size() > 0) {
@@ -78,17 +88,19 @@ public class AprilTagAdvancedFunctionalityTopLeft extends LinearOpMode {
             double x = tag.ftcPose.x;
             double y = tag.ftcPose.y;
 
-            if (leftTrajectory == 1) {
+            if (Trajectory == leftTrajectory) {
                 drive.followTrajectoryAsync(startTopLeftTraj);
 
                 //adjustedAngle = .getBearing()
                 //Alternatively use trig to calculate the angle bearing using the x, y values:
                 double adjustedAngle = Math.round(Math.atan(x/y));
                 Trajectory topLeftTraj_toAprilTag = drive.trajectoryBuilder(startTopLeftTraj.end())
-                        //Using headings this way will ensure that the camera sees the left aprilTag first
-                        .lineToLinearHeading(new Pose2d(-41.25, 22, Math.toRadians(90))) //back up and face the left AprilTag
-                        .lineToSplineHeading(new Pose2d(-41.25, 42.5, Math.toRadians(90))) //move to apriltag
-                        .build();
+                    //Using headings this way will ensure that the camera sees the left aprilTag first
+                    .lineToConstantHeading(new Vector2d(-41.25, 50.5),
+                                            SampleMecanumDrive.getVelocityConstraint(8, 49, 14.65),
+                                            SampleMecanumDrive.getAccelerationConstraint(49)
+                    )
+                    .build();
                 drive.followTrajectory(topLeftTraj_toAprilTag);
 
                 //Line up the robot to the adjusted angle
@@ -96,21 +108,21 @@ public class AprilTagAdvancedFunctionalityTopLeft extends LinearOpMode {
 
                 //move forward to the backdrop, slower velocity
                 Trajectory topLeftTraj_toOutput_toPark = drive.trajectoryBuilder(topLeftTraj_toAprilTag.end())
-                        .lineToConstantHeading(
-                                new Vector2d(-41.25, 50.5),
+                        .lineToConstantHeading(new Vector2d(-41.25, 50.5),
                                 SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         )
                         .addDisplacementMarker(() -> {
                             //drop into the backdrop
                         })
-                        .lineToLinearHeading(new Pose2d(-10, 48, Math.toRadians(180)))
-                        .lineToLinearHeading(new Pose2d(-10, 70, Math.toRadians(270)))
+                        .lineToConstantHeading(new Vector2d(-41.25, 48))
+                        .lineToLinearHeading(new Pose2d(-58.5, 48, Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(-58.5, 65, Math.toRadians(270)))
                         .build();
                 drive.followTrajectory(topLeftTraj_toOutput_toPark);
 
-            } else if (middleTrajectory == 2) {
-
+            } else if (Trajectory == middleTrajectory) {
+                
             } else { //right trajectory
 
             }
