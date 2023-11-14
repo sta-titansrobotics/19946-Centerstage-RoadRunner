@@ -1,3 +1,5 @@
+//FINALIZED:
+
 package com.example.meepmeeptesting.Centerstage;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -17,11 +19,12 @@ public class AutoAdvancedMeepMeepTopLeft {
     private static int LEFT = 0;
     private static int MIDDLE = 1;
     private static int RIGHT = 2;
+    private static int DEFAULT = 3;
     private static int ChooseTrajectoryPath;
 
     public static void main(String[] args) {
         //ChooseTrajectoryPath = (int) (Math.random() * (2));
-        ChooseTrajectoryPath = 0;
+        ChooseTrajectoryPath = 3;
 
         MeepMeep meepMeep = new MeepMeep(590);
 
@@ -49,7 +52,7 @@ public class AutoAdvancedMeepMeepTopLeft {
                                     .addSpatialMarker(new Vector2d(-37, 22), () -> {
                                         //drop the pixel
                                     })
-                                    .waitSeconds(2)
+                                    .waitSeconds(2) //simulate dropping 
                                     .back((7.5),
                                             SampleMecanumDrive.getVelocityConstraint(8, 49, 14.65),
                                             SampleMecanumDrive.getAccelerationConstraint(49)
@@ -283,6 +286,37 @@ public class AutoAdvancedMeepMeepTopLeft {
                     .setBackgroundAlpha(0.95f)
                     .addEntity(RightBot)
                     .start();
+        }
+        if (ChooseTrajectoryPath == DEFAULT) {
+            RoadRunnerBotEntity DefaultBot = new DefaultBotBuilder(meepMeep)
+                    // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                    .setConstraints(49, 49, (49.0 / 16.5) * 0.80, Math.toRadians(180), 14.65)
+                    .setDimensions(17.75, 17.875)
+                    .followTrajectorySequence(drive ->
+                            drive.trajectorySequenceBuilder(new Pose2d(-63, 10, Math.toRadians(0)))
+                                    .lineToLinearHeading(new Pose2d(-35, 29, Math.toRadians(90)))
+                                    .lineToConstantHeading(new Vector2d(-35, 42.5))
+                                    .lineToConstantHeading(new Vector2d(-35, 50.5),
+                                            SampleMecanumDrive.getVelocityConstraint(8, 49, 14.65),
+                                            SampleMecanumDrive.getAccelerationConstraint(49)
+                                    )
+                                    .addSpatialMarker(new Vector2d(-35, 50.5), () -> {
+                                        //Drop into the backdrop
+                                    })
+                                    .waitSeconds(2) //simulate dropping
+                                    .lineToConstantHeading(new Vector2d(-41.25, 48))
+                                    .lineToLinearHeading(new Pose2d(-58.5, 48, Math.toRadians(0)))
+                                    .lineToLinearHeading(new Pose2d(-58.5, 65, Math.toRadians(270)))
+                                    .build()
+                    );
+
+                meepMeep.setBackground(img)
+                    //  <following code you were using previously>
+                    .setDarkMode(true)
+                    .setBackgroundAlpha(0.95f)
+                    .addEntity(DefaultBot)
+                    .start();
+                
         }
     }
 }
