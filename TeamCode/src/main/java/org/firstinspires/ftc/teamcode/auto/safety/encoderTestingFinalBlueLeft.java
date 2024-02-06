@@ -86,15 +86,15 @@ public class encoderTestingFinalBlueLeft extends LinearOpMode {
         //can now set drive distance because of the function below; now we just need to input the distance
         //can also control the direction using the mecanum drivetrain directions here: https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
 
-        drive(100, -100, -100, 100, 0.75); //Strafe right
-        drive(250, 250, 250, 250, 0.5);
+        drive(-51, 51, 54, -54, 0.3); //Strafe left
+        drive(-70, -70, -70, -70, 0.3); //Drive back
         //Drop in backdrop:
         raiseSlider();
         dropPixels();
         //Back up and park
-        drive(-20, -20, -20, -20, 0.35);
-        drive(-100, 100, 100, -100, 1); //Strafe left
-        drive(50, 50, 50, 50, 0.25);
+        drive(20, 20, 20, 20, 0.2);
+        drive(60, -60, -60, 60, 0.3); //Strafe right
+        drive(-50, -50, -50, -50, 0.25);
 
         //1425.1 ticks/rev
         motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -184,6 +184,10 @@ public class encoderTestingFinalBlueLeft extends LinearOpMode {
         motorFR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorBR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //while loop to stall/delay the next command
         while(motorFL.isBusy() && motorBL.isBusy() && motorFR.isBusy() && motorBR.isBusy()) {
 
@@ -204,8 +208,8 @@ public class encoderTestingFinalBlueLeft extends LinearOpMode {
     }
 
     private void raiseSlider() {
-        sliderMotor.setTargetPosition(30000);
-        sliderMotor.setPower(0.9);
+        sliderMotor.setTargetPosition(9000);
+        sliderMotor.setPower(0.7);
         sliderMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //Stall the next command:
         while (sliderMotor.isBusy()) {

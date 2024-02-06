@@ -72,13 +72,10 @@ public class EncoderTestingPID extends LinearOpMode {
         //can now set drive distance because of the function below; now we just need to input the distance
         //can also control the direction using the mecanum drivetrain directions here: https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
 
-        //Strafe diagonally left towards the
-        PIDDrive(100, 100, 100, 100);
-        //ex: this command will get the robot to strafe left for 9cm at a speed of 1
-        PIDDrive(-100, 100, 100, -100);
-        //
-        PIDDrive(-280, -280, 280, 280);
+        //Starting position with robot right side
+        PIDDrive(100, -100, -100, 100);
 
+        PIDDrive(250, 250, 250, 250);
 
         while (opModeIsActive()) {
             telemetry.addData("motorFL Encoder Position: ",motorFL.getCurrentPosition());
